@@ -2,19 +2,23 @@ import { memo } from "react";
 import { Col, Row } from "react-bootstrap";
 import { ContactCard } from "src/components/ContactCard";
 import { FilterForm, FilterFormValues } from "src/components/FilterForm";
-import { useAppDispatch, useAppSelector } from "src/store/hooks";
+import { useAppDispatch } from "src/store/hooks";
 import { fetchFindContacts } from "src/store/actions";
+import { useGetContactsQuery } from "src/store/contacts";
+import { useGetGroupsQuery } from "src/store/groups";
 
 export const ContactListPage = memo(() => {
-  const { listContacts, listGroupContacts } = useAppSelector(
-    (state) => state.contacts
-  );
-
   const dispatch = useAppDispatch();
 
   const onSubmit = (fv: Partial<FilterFormValues>) => {
     dispatch(fetchFindContacts(fv));
   };
+
+  const { data: contactsData } = useGetContactsQuery();
+  const listContacts = contactsData ?? [];
+
+  const { data: groupsData } = useGetGroupsQuery();
+  const listGroupContacts = groupsData ?? [];
 
   return (
     <Row xxl={1}>
