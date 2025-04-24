@@ -7,15 +7,13 @@ import { Empty } from "src/components/Empty";
 import { useGetContactsQuery } from "src/store/contacts";
 
 export const ContactPage = () => {
-  const { data: contactsData } = useGetContactsQuery();
-  const listContacts = useMemo(() => contactsData ?? [], [contactsData]);
-
   const { contactId } = useParams<{ contactId: string }>();
-  const [contact, setContact] = useState<ContactDto>();
 
-  useEffect(() => {
-    setContact(() => listContacts.find(({ id }) => id === contactId));
-  }, [contactId, listContacts]);
+	const { contact } = useGetContactsQuery(undefined, {
+    selectFromResult: ({ data }) => ({
+      contact: data?.find((contact) => contact.id === contactId),
+    }),
+  })
 
   return (
     <Row xxl={3}>
