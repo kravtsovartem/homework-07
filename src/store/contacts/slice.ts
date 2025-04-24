@@ -3,15 +3,21 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ContactDto } from 'src/types/dto/ContactDto'
 
 
-const initialState: ContactDto["id"][] = []
+const initialState: ContactDto[] = []
 
 export const favoriteContactsSlice = createSlice({
 	name: 'favoriteContacts',
 	initialState,
 	reducers: {
-		setFavoriteContact: (state, action: { payload: ContactDto["id"] }) => {
+		setFavoriteContact: (state, action: { payload: ContactDto }) => {
 			state.push(action.payload)
 		}
+	},
+	extraReducers(builder) {
+			builder.addMatcher(
+				contactsSlice.endpoints.getContacts.matchFulfilled,
+				(state, action) => state = action.payload.slice(0, 4)
+			)
 	},
 })
 
