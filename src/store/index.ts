@@ -3,8 +3,6 @@ import { combineReducers } from "redux"
 import { contactsMiddleware, contactsReducerPath, contactsReducer, favoriteContactsReducerPath, favoriteContactsReducer } from "src/store/contacts"
 import { groupsMiddleware, groupsReducer, groupsReducerPath } from "src/store/groups"
 
-console.log(contactsReducerPath)
-
 
 const rootReducer = combineReducers({
 	[contactsReducerPath]: contactsReducer,

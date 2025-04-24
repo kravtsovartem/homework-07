@@ -1,7 +1,6 @@
 {
   "name": "homework-07",
   "version": "0.1.0",
-  "homepage": "https://kravtsovartem.github.io/homework-07/",
   "private": true,
   "devDependencies": {
     "@testing-library/jest-dom": "5.16.5",

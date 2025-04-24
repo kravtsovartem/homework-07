@@ -7,8 +7,6 @@ export const GroupListPage = memo(() => {
   const { data: groupsData } = useGetGroupsQuery();
   const listGroupContacts = groupsData ?? [];
 
-  console.log(listGroupContacts);
-
   return (
     <Row xxl={4}>
       {listGroupContacts.map((groupContacts) => (
