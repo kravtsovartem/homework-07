@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import "./MainApp.scss";
 import { ThemeProvider } from "react-bootstrap";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -10,18 +9,8 @@ import {
   FavoritListPage,
   GroupListPage,
 } from "src/pages";
-import { useAppDispatch } from "src/store/hooks";
-import { fetchContacts, fetchGroupContacts } from "src/store/actions";
 
 export const MainApp = () => {
-
-	const dispatch = useAppDispatch();
-
-	useEffect(() => {
-		dispatch(fetchContacts())
-		dispatch(fetchGroupContacts())
-	}, [])
-
   return (
     <ThemeProvider
       breakpoints={["xxxl", "xxl", "xl", "lg", "md", "sm", "xs", "xxs"]}

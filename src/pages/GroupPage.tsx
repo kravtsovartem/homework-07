@@ -1,43 +1,38 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { ContactDto } from "src/types/dto/ContactDto";
-import { GroupContactsDto } from "src/types/dto/GroupContactsDto";
 import { GroupContactsCard } from "src/components/GroupContactsCard";
 import { Empty } from "src/components/Empty";
 import { ContactCard } from "src/components/ContactCard";
-import { useAppSelector } from "src/store/hooks";
+import { useGetContactsQuery } from "src/store/contacts";
+import { useGetGroupsQuery } from "src/store/groups";
 
 export const GroupPage = memo(() => {
   const { groupId } = useParams<{ groupId: string }>();
-  const [contacts, setContacts] = useState<ContactDto[]>([]);
-  const [groupContacts, setGroupContacts] = useState<GroupContactsDto>();
 
-  const { listContacts, listGroupContacts } = useAppSelector(
-    (state) => state.contacts
-  );
+  const { group } = useGetGroupsQuery(undefined, {
+    selectFromResult: ({ data }) => ({
+      group: data?.find((group) => group.id === groupId),
+    }),
+  });
 
-  useEffect(() => {
-    const findGroup = listGroupContacts.find(({ id }) => id === groupId);
-    setGroupContacts(findGroup);
-    setContacts(() => {
-      if (findGroup) {
-        return listContacts.filter(({ id }) =>
-          findGroup.contactIds.includes(id)
-        );
-      }
-      return [];
-    });
-  }, [groupId]);
+  const { contacts } = useGetContactsQuery(undefined, {
+    selectFromResult: ({ data }) => ({
+      contacts:
+        group && data
+          ? data.filter(({ id }) => group.contactIds.includes(id))
+          : [],
+    }),
+  });
 
   return (
     <Row className="g-4">
-      {groupContacts ? (
+      {group ? (
         <>
           <Col xxl={12}>
             <Row xxl={3}>
               <Col className="mx-auto">
-                <GroupContactsCard groupContacts={groupContacts} />
+                <GroupContactsCard groupContacts={group} />
               </Col>
             </Row>
           </Col>

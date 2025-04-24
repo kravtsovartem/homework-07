@@ -1,19 +1,50 @@
-import { memo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { ContactCard } from "src/components/ContactCard";
 import { FilterForm, FilterFormValues } from "src/components/FilterForm";
-import { useAppDispatch, useAppSelector } from "src/store/hooks";
-import { fetchFindContacts } from "src/store/actions";
+import { useGetContactsQuery } from "src/store/contacts";
+import { useGetGroupsQuery } from "src/store/groups";
+import { ContactDto } from "src/types/dto/ContactDto";
 
 export const ContactListPage = memo(() => {
-  const { listContacts, listGroupContacts } = useAppSelector(
-    (state) => state.contacts
-  );
 
-  const dispatch = useAppDispatch();
+  const { data: contactsData } = useGetContactsQuery();
+  const listContacts = useMemo(() => contactsData ?? [], [contactsData]);
+
+  const { data: groupsData } = useGetGroupsQuery();
+  const listGroupContacts = groupsData ?? [];
+
+  const [findListContacts, setFindListContacts] = useState<ContactDto[]>([]);
+
+  useEffect(() => {
+    setFindListContacts(listContacts);
+
+
+  }, [listContacts]);
 
   const onSubmit = (fv: Partial<FilterFormValues>) => {
-    dispatch(fetchFindContacts(fv));
+
+    let findContacts = listContacts;
+    if (fv.name) {
+      const fvName = fv.name.toLowerCase();
+      findContacts = findContacts.filter(
+        ({ name }) => name.toLowerCase().indexOf(fvName) > -1
+      );
+    }
+
+    if (fv.groupId) {
+      const groupContacts = listGroupContacts.find(
+        ({ id }) => id === fv.groupId
+      );
+
+      if (groupContacts) {
+        findContacts = findContacts.filter(({ id }) =>
+          groupContacts.contactIds.includes(id)
+        );
+      }
+    }
+
+    setFindListContacts(findContacts);
   };
 
   return (
@@ -27,7 +58,7 @@ export const ContactListPage = memo(() => {
       </Col>
       <Col>
         <Row xxl={4} className="g-4">
-          {listContacts.map((contact) => (
+          {findListContacts.map((contact) => (
             <Col key={contact.id}>
               <ContactCard contact={contact} withLink />
             </Col>
