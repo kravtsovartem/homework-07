@@ -1,19 +1,14 @@
-import { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { Col, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { ContactDto } from "src/types/dto/ContactDto";
 import { ContactCard } from "src/components/ContactCard";
 import { Empty } from "src/components/Empty";
-import { useAppSelector } from "src/store/hooks";
+import { contactsStore } from "src/store/contactsStore";
 
-export const ContactPage = () => {
-  const { listContacts } = useAppSelector((state) => state.contacts);
+export const ContactPage = observer(() => {
   const { contactId } = useParams<{ contactId: string }>();
-  const [contact, setContact] = useState<ContactDto>();
 
-  useEffect(() => {
-    setContact(() => listContacts.find(({ id }) => id === contactId));
-  }, [contactId]);
+  const contact = contactsStore.findContact(contactId);
 
   return (
     <Row xxl={3}>
@@ -22,4 +17,4 @@ export const ContactPage = () => {
       </Col>
     </Row>
   );
-};
+});

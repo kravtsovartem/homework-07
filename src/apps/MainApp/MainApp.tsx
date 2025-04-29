@@ -10,16 +10,14 @@ import {
   FavoritListPage,
   GroupListPage,
 } from "src/pages";
-import { useAppDispatch } from "src/store/hooks";
-import { fetchContacts, fetchGroupContacts } from "src/store/actions";
+import { contactsStore } from "src/store/contactsStore";
+import { groupContactsStore } from "src/store/groupsStore";
 
 export const MainApp = () => {
 
-	const dispatch = useAppDispatch();
-
 	useEffect(() => {
-		dispatch(fetchContacts())
-		dispatch(fetchGroupContacts())
+		contactsStore.fetchContacts()
+		groupContactsStore.fetchGroups()
 	}, [])
 
   return (
