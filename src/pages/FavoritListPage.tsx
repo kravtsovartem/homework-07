@@ -1,5 +1,4 @@
 import { observer } from "mobx-react-lite";
-import { memo } from "react";
 import { Col, Row } from "react-bootstrap";
 import { ContactCard } from "src/components/ContactCard";
 import { contactsStore } from "src/store/contactsStore";
