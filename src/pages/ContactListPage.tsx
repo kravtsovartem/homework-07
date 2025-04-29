@@ -1,30 +1,24 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { ContactCard } from "src/components/ContactCard";
 import { FilterForm, FilterFormValues } from "src/components/FilterForm";
-import { useGetContactsQuery } from "src/store/contacts";
-import { useGetGroupsQuery } from "src/store/groups";
+import { contactsStore } from "src/store/contactsStore";
+import { groupContactsStore } from "src/store/groupsStore";
 import { ContactDto } from "src/types/dto/ContactDto";
 
-export const ContactListPage = memo(() => {
-
-  const { data: contactsData } = useGetContactsQuery();
-  const listContacts = useMemo(() => contactsData ?? [], [contactsData]);
-
-  const { data: groupsData } = useGetGroupsQuery();
-  const listGroupContacts = groupsData ?? [];
+export const ContactListPage = observer(() => {
+  const { contacts } = contactsStore;
+  const { groupContacts: groupsContacts } = groupContactsStore;
 
   const [findListContacts, setFindListContacts] = useState<ContactDto[]>([]);
 
   useEffect(() => {
-    setFindListContacts(listContacts);
-
-
-  }, [listContacts]);
+    setFindListContacts(contacts);
+  }, [contacts]);
 
   const onSubmit = (fv: Partial<FilterFormValues>) => {
-
-    let findContacts = listContacts;
+    let findContacts = contacts;
     if (fv.name) {
       const fvName = fv.name.toLowerCase();
       findContacts = findContacts.filter(
@@ -33,9 +27,7 @@ export const ContactListPage = memo(() => {
     }
 
     if (fv.groupId) {
-      const groupContacts = listGroupContacts.find(
-        ({ id }) => id === fv.groupId
-      );
+      const groupContacts = groupsContacts.find(({ id }) => id === fv.groupId);
 
       if (groupContacts) {
         findContacts = findContacts.filter(({ id }) =>
@@ -51,7 +43,7 @@ export const ContactListPage = memo(() => {
     <Row xxl={1}>
       <Col className="mb-3">
         <FilterForm
-          groupContactsList={listGroupContacts}
+          groupContactsList={groupsContacts}
           initialValues={{}}
           onSubmit={onSubmit}
         />

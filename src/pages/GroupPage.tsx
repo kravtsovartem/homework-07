@@ -1,29 +1,15 @@
-import React, { memo } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { GroupContactsCard } from "src/components/GroupContactsCard";
 import { Empty } from "src/components/Empty";
 import { ContactCard } from "src/components/ContactCard";
-import { useGetContactsQuery } from "src/store/contacts";
-import { useGetGroupsQuery } from "src/store/groups";
+import { groupContactsStore } from "src/store/groupsStore";
+import { observer } from "mobx-react-lite";
 
-export const GroupPage = memo(() => {
+export const GroupPage = observer(() => {
   const { groupId } = useParams<{ groupId: string }>();
 
-  const { group } = useGetGroupsQuery(undefined, {
-    selectFromResult: ({ data }) => ({
-      group: data?.find((group) => group.id === groupId),
-    }),
-  });
-
-  const { contacts } = useGetContactsQuery(undefined, {
-    selectFromResult: ({ data }) => ({
-      contacts:
-        group && data
-          ? data.filter(({ id }) => group.contactIds.includes(id))
-          : [],
-    }),
-  });
+  const { group, contacts } = groupContactsStore.findGroupContacts(groupId);
 
   return (
     <Row className="g-4">
